@@ -10,13 +10,12 @@ const Footer = () => {
     setIsMounted(true);
   }, []);
 
-  if (!isMounted) return null; // Prevents mismatches during hydration
+  if (!isMounted) return null; 
 
   return (
     <footer className="bg-gray-800 text-white py-8">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Quick Links */}
           <div>
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul>
@@ -41,13 +40,13 @@ const Footer = () => {
           {/* Social Icons */}
           <div className="flex justify-center space-x-6">
             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-              <FaFacebookF className="text-gray-400 hover:text-white text-xl" />
+              <FaFacebookF className="text-gray-400 hover:text-blue-500 text-xl" />
             </a>
             <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-              <FaTwitter className="text-gray-400 hover:text-white text-xl" />
+              <FaTwitter className="text-gray-400 hover:text-blue-500 text-xl" />
             </a>
             <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
-              <FaLinkedinIn className="text-gray-400 hover:text-white text-xl" />
+              <FaLinkedinIn className="text-gray-400 hover:text-blue-800 text-xl" />
             </a>
           </div>
 
