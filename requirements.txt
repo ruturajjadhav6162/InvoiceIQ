@@ -1,0 +1,11 @@
+streamlit
+python-dotenv
+pillow
+google-generativeai
+pandas
+xlsxwriter
+spacy
+groq
+fastapi
+uvicorn
+python-multipart
