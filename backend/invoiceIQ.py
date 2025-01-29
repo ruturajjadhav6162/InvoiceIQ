@@ -1,10 +1,12 @@
-from fastapi import FastAPI, UploadFile, File, Form
+from fastapi import FastAPI, UploadFile, File,Response, Form
 import os
 import json
 from groq import Groq
 import google.generativeai as genai
 from dotenv import load_dotenv
-
+from io import BytesIO, StringIO
+import pandas as pd
+from fastapi.middleware.cors import CORSMiddleware
 # Load environment variables
 load_dotenv()
 
@@ -19,6 +21,13 @@ genai.configure(api_key=gemini_api_key)
 groq_client = Groq(api_key=groq_api_key)
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins for development (restrict in production)
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
 
 def get_gemini_response(input_text, image, prompt):
     """Generate content from Gemini AI."""
@@ -63,6 +72,22 @@ def convert_json_to_csv_with_groq(invoice_data):
         return csv_data
     except Exception as e:
         return f"Error: {str(e)}"
+def convert_csv_to_excel_with_groq(csv_data):
+    """Convert CSV invoice data to an Excel file using pandas."""
+    try:
+        # Create a StringIO object from the CSV data
+        csv_io = StringIO(csv_data)  # This wraps the CSV string in a file-like object
+        df = pd.read_csv(csv_io)  # Read the CSV into a pandas DataFrame
+        
+        # Convert the DataFrame to Excel format
+        excel_buffer = BytesIO()  # Create a BytesIO buffer to store the Excel file
+        df.to_excel(excel_buffer, index=False, engine='openpyxl')  # Write to Excel
+        excel_buffer.seek(0)  # Move to the beginning of the buffer
+        
+        return excel_buffer
+    
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 @app.post("/upload-invoice/")
 async def upload_invoice(file: UploadFile = File(...), input_text: str = ''):
@@ -80,11 +105,15 @@ async def upload_invoice(file: UploadFile = File(...), input_text: str = ''):
 
         # Convert JSON to CSV using Groq
         csv_data = convert_json_to_csv_with_groq(invoice_metadata)
+        
+        excel_buffer= convert_csv_to_excel_with_groq(csv_data)
 
         # Send CSV as a file response
-        return Response(csv_data, media_type="text/csv",
-                        headers={"Content-Disposition": "attachment; filename=invoice.csv"})
-
+        return Response(
+            excel_buffer.getvalue(), 
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": "attachment; filename=invoice.xlsx"}
+        )
     except Exception as e:
         return {"error": str(e)}
 
