@@ -10,5 +10,10 @@ To run streamlit
 
 This are the env required to run the backend successfully 
 
-```GOOGLE_API_KEY = ""
-GROQ_API_KEY= ""```
+`GOOGLE_API_KEY = "" 
+GROQ_API_KEY= ""`
+
+To run Frontend
+
+1) ```npm install ```
+2) ``` npm run dev```

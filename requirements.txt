@@ -9,3 +9,4 @@ groq
 fastapi
 uvicorn
 python-multipart
+openpyxl
