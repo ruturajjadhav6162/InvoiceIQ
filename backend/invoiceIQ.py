@@ -1,10 +1,8 @@
-from fastapi import FastAPI, UploadFile, File, Response
+from fastapi import FastAPI, UploadFile, File, Form
 import os
 import json
 from groq import Groq
 import google.generativeai as genai
-from io import BytesIO
-import pandas as pd
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -86,6 +84,22 @@ async def upload_invoice(file: UploadFile = File(...), input_text: str = ''):
         # Send CSV as a file response
         return Response(csv_data, media_type="text/csv",
                         headers={"Content-Disposition": "attachment; filename=invoice.csv"})
+
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.post("/query-invoice/")
+async def query_invoice(question: str = Form(...), file: UploadFile = File(...)):
+    """Query the invoice and get the response."""
+    try:
+        # Read the uploaded image file
+        image_data = await file.read()
+
+        # Process the image data to extract text from the invoice using Gemini
+        input_prompt = "Extract all key information from this invoice image and answer the user's query.Only respond to what the user has asked"
+        response_text = get_gemini_response(question, [{"mime_type": file.content_type, "data": image_data}], input_prompt)
+        
+        return {"answer": response_text}
 
     except Exception as e:
         return {"error": str(e)}
