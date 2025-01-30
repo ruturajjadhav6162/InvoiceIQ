@@ -17,3 +17,7 @@ To run Frontend
 
 1) ```npm install ```
 2) ``` npm run dev```
+
+
+To run entire code on docker 
+```docker-compose up -d --build```
