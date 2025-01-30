@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3000:3000"  # This maps port 3000 inside the container to port 3000 on your host
+    networks:
+      - app-network
+    depends_on:
+      - backend  # Ensures that backend is started before frontend
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"  # Backend API is exposed on port 8000
+    networks:
+      - app-network
+    env_file:
+      - .env  # Load environment variables from the .env file
+
+networks:
+  app-network:
+    driver: bridge

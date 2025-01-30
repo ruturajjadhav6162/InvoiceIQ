@@ -4,8 +4,8 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import Header1 from "./../components/Header1";
 import Footer from "../components/Footer";
-import { useRouter } from "next/navigation";
 import EducationalSection from "../components/EducationalSection";
+import Image from "next/image"; // Import Image from Next.js
 
 export default function Home() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,11 +15,8 @@ export default function Home() {
   const [showButtons, setShowButtons] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [messages, setMessages] = useState<{ role: "user" | "bot"; text: string }[]>([]);
-  const [userMessage, setUserMessage] = useState("");
   const [csvData, setCsvData] = useState<Blob | null>(null);
   const [question, setQuestion] = useState("");
-
-  const router = useRouter();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -38,7 +35,7 @@ export default function Home() {
     formData.append("file", file); // Append the file to be uploaded
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/upload-invoice/", {
+      const response = await fetch("http://localhost:8000/upload-invoice/", {
         method: "POST",
         body: formData,
       });
@@ -70,9 +67,9 @@ export default function Home() {
   };
 
   const sendMessage = async () => {
-    if (!question.trim()) return;  // Changed from userMessage to question
+    if (!question.trim()) return;
   
-    setMessages((prevMessages) => [...prevMessages, { role: "user", text: question }]);  // Changed from userMessage to question
+    setMessages((prevMessages) => [...prevMessages, { role: "user", text: question }]);
   
     if (!file) {
       console.error("No image file selected.");
@@ -81,11 +78,11 @@ export default function Home() {
   
     // Prepare the FormData to send both the question and the image file
     const formData = new FormData();
-    formData.append("question", question);  // Changed from userMessage to question
+    formData.append("question", question);
     formData.append("file", file);
   
     try {
-      const response = await fetch("http://127.0.0.1:8000/query-invoice/", {
+      const response = await fetch("http://localhost:8000/query-invoice/", {
         method: "POST",
         body: formData,
       });
@@ -119,7 +116,7 @@ export default function Home() {
           <X className="h-6 w-6 text-gray-600" />
         </button>
         <ul className="mt-10 space-y-4">
-          {["Home","Logout"].map((item, index) => (
+          {["Home", "Logout"].map((item, index) => (
             <li key={index}>
               <Link
                 href={`/${item.toLowerCase()}`}
@@ -150,7 +147,13 @@ export default function Home() {
           {file && fileType && (
             <div className="mt-6">
               {fileType.startsWith("image") && (
-                <img src={URL.createObjectURL(file)} alt="Uploaded" className="h-80 w-80 object-contain mx-auto mb-4 " />
+                <Image
+                  src={URL.createObjectURL(file)}
+                  alt="Uploaded"
+                  className="h-80 w-80 object-contain mx-auto mb-4"
+                  width={320}
+                  height={320}
+                />
               )}
             </div>
           )}
