@@ -55,8 +55,8 @@ minikube start
 
 ### 2. Apply Kubernetes Configurations
 ```sh
-kubectl apply -f backend-deployment.yaml
-kubectl apply -f frontend-deployment.yaml
+kubectl apply -f kubernetes/backend-deployment.yaml
+kubectl apply -f kubernetes/frontend-deployment.yaml
 ```
 
 ### 3. Expose Services via Minikube
