@@ -19,7 +19,17 @@ spec:
           image: ruturajjadhav6162/backend-service:latest 
           ports:
             - containerPort: 8000
-          
+          env:
+            - name: GROQ_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: api-keys-secret
+                  key: GROQ_API_KEY
+            - name: GOOGLE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: api-keys-secret
+                  key: GOOGLE_API_KEY
 ---
 apiVersion: v1
 kind: Service
@@ -31,5 +41,5 @@ spec:
   ports:
     - protocol: TCP
       port: 8000  
-      targetPort: 8000  # 
-  type: LoadBalancer  
+      targetPort: 8000
+  type: LoadBalancer
